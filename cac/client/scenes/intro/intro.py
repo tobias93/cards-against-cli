@@ -40,11 +40,11 @@ class IntroScene(GameObject):
             win, f"Hello World!",
             1, 1, w - 2, h - 2,
             word_wrap=True,
-            fill_bg="~",
+            fill_bg=" ",
             alignment=TextAlignment.CENTER,
             valignment=VerticalTextAlignment.CENTER,
             text_colour_pair=get_colour_pair_nr(1, 0, 0, 0, 1, 1),
             bg_colour_pair=get_colour_pair_nr(0.5, 0.25, 0, 0.5, 0.5, 0)
         )
-        win.border()
+        #win.border()
         self._title.draw(win, 5, 5)

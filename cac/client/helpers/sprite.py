@@ -16,6 +16,8 @@ class Sprite:
         with get_asset_text_file(asset_name) as file:
             for line in file:
 
+                line = line.rstrip("\n")
+
                 # ignore empty lines
                 if line == "":
                     continue
@@ -79,7 +81,7 @@ class Sprite:
                         cur_pos, cur_formatflag = colour_state[curr_colourstate_pos]
                         curr_colourstate_pos += 1
                         if curr_colourstate_pos >= len(colour_state):
-                            next_pos = len(text)
+                            next_pos = width
                         else:
                             next_pos, _ = colour_state[curr_colourstate_pos]
                         try:
@@ -92,4 +94,30 @@ class Sprite:
         self._height = height
 
     def draw(self, win, x, y):
-        self._pad.overwrite(win, 0, 0, y, x, y + self._height - 1, x + self._width - 1)
+        h, w = win.getmaxyx()
+        s_x, s_y = 0, 0
+        d_x, d_y = x, y
+        d_x2, d_y2 = x + self._width - 1, y + self._height - 1
+
+        # clip on the border of the destination window
+        if d_x < 0:
+            s_x -= d_x
+            d_x = 0
+        if d_x >= w:
+            return
+        if d_x2 < 0:
+            return
+        if d_x2 >= w:
+            d_x2 = w - 1
+        if d_y < 0:
+            s_y -= d_y
+            d_y = 0
+        if d_y >= h:
+            return
+        if d_y2 < 0:
+            return
+        if d_y2 >= h:
+            d_y2 = h - 1
+
+        # copy to the destination window
+        self._pad.overwrite(win, s_y, s_x, d_y, d_x, d_y2, d_x2)
