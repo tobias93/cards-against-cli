@@ -121,3 +121,7 @@ class Sprite:
 
         # copy to the destination window
         self._pad.overwrite(win, s_y, s_x, d_y, d_x, d_y2, d_x2)
+
+    @property
+    def size(self):
+        return self._width, self._height

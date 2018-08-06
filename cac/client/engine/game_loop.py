@@ -120,17 +120,21 @@ class Game:
         # make sure, a render pad of the correct size exists
         w, h = go.size
         x, y = go.position
+        visible = w > 0 and h > 0
         if base_mooved:
             hk.mooved = True
-        if hk.render_pad is None:
+        if hk.render_pad is None and visible:
             hk.render_pad = curses.newpad(h, w)
         else:
-            if hk.resized:
+            if hk.resized and visible:
                 hk.render_pad.resize(h, w)
 
         # rerender it
-        go.render(hk.render_pad)
-        hk.render_pad.noutrefresh(0, 0, y, x, y + h - 1, x + w - 1)
+        if w != 0 and h != 0 and visible:
+            go.render(hk.render_pad)
+            # todo clip coordinates, so that curses does not
+            # throw an exception when the window is too small
+            hk.render_pad.noutrefresh(0, 0, y, x, y + h - 1, x + w - 1)
 
         # recursively render subwindows
         children = go.get_child_objects()
