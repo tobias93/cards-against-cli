@@ -67,7 +67,7 @@ class GameObject(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def process_event(self, type, arg):
+    def process_event(self, event):
         """
         Is called, when an event occurs.
 

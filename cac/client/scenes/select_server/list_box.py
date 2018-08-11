@@ -1,7 +1,7 @@
 from cac.client.engine.game_object import GameObject
-from cac.client.engine.game_loop import EventType
 from cac.client.engine.curses_text import render_text
 from cac.client.engine.curses_colour import get_colour_pair_nr
+from cac.client.engine.events_keyboard import KeyboardEvent
 
 
 class ListBoxItem:
@@ -37,11 +37,11 @@ class ListBox(GameObject):
     def get_child_objects(self):
         return []
 
-    def process_event(self, event_type, arg):
-        if event_type == EventType.KEY_DOWN:
-            if arg == 'j':
+    def process_event(self, event):
+        if isinstance(event, KeyboardEvent):
+            if event.is_ascii_key('j'):
                 self._selected_item_index += 1
-            elif arg == 'k':
+            elif event.is_ascii_key('k'):
                 self._selected_item_index -= 1
 
     def update(self, delta_time):

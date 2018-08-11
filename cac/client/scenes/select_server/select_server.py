@@ -3,10 +3,11 @@ import socket
 
 from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 
+from cac.client.scenes.select_server.list_box import ListBox, ListBoxItem
 from cac.client.engine.game_object import Scene
+from cac.client.engine.events import EventPropagation
 from cac.client.engine.curses_text import render_text, \
     TextAlignment, VerticalTextAlignment
-from cac.client.scenes.select_server.list_box import ListBox, ListBoxItem
 
 
 class Server():
@@ -57,8 +58,8 @@ class SelectServerScene(Scene):
         else:
             return []
 
-    def process_event(self, event_type, arg):
-        self._server_list_box.process_event(event_type, arg)
+    def process_event(self, event):
+        return EventPropagation.propagate_forward(self._server_list_box)
 
     def update(self, delta_time):
 

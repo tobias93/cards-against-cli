@@ -22,7 +22,7 @@ class TitleBox(GameObject):
     def get_child_objects(self):
         return []
 
-    def process_event(self, event_type, arg):
+    def process_event(self, event):
         pass
 
     def update(self, delta_time):

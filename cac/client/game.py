@@ -1,7 +1,8 @@
 import os.path
 import curses
 from cac.client.engine.game_loop import Game
-from cac.client.engine.game_assets import load_assets_from_folder
+from cac.client.engine.events_keyboard import KeyboardEventSource
+from cac.client.engine.asset_loader import load_assets_from_folder
 from cac.client.scenes.intro.intro import IntroScene
 
 
@@ -13,6 +14,7 @@ def main(curses_window):
 
     # load game with the into scene
     game = Game()
+    game.add_event_source(KeyboardEventSource())
     scene = IntroScene()
     game.load_scene(scene)
 

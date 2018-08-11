@@ -1,13 +1,8 @@
 import curses
 import time
-from enum import Enum
 
 from cac.client.engine.game_object import Scene
-
-
-class EventType(Enum):
-    KEY_DOWN = 1
-    KEY_UP = 2
+from cac.client.engine.events import EventPropagation
 
 
 class Game:
@@ -15,6 +10,7 @@ class Game:
     def __init__(self):
         self._current_scene = None
         self._max_framerate = 25
+        self._event_sources = []
 
     def exit(self):
         self.load_scene(None)
@@ -22,6 +18,9 @@ class Game:
     def load_scene(self, main_game_object):
         assert isinstance(main_game_object, Scene)
         self._current_scene = main_game_object
+
+    def add_event_source(self, event_source):
+        self._event_sources.append(event_source)
 
     def run(self, curses_window=None):
         """
@@ -34,9 +33,6 @@ class Game:
             return curses.wrapper(self.run)
         curses.curs_set(0)
         curses_window.nodelay(True)
-
-        # keyboard
-        last_key = ""
 
         # init
         last_frame_time = time.time()
@@ -71,18 +67,10 @@ class Game:
             last_frame_time = this_frame_time
 
             # process events
-            # keyboard
-            try:
-                key = curses_window.getkey()
-            except Exception:
-                key = ""    # no key was pressed
-
-            if last_key != "" and key != last_key:
-                scene.process_event(EventType.KEY_UP, last_key)
-            if key != "" and key != last_key:
-                scene.process_event(EventType.KEY_DOWN, key)
-
-            last_key = key
+            for evt_src in self._event_sources:
+                events = evt_src.get_events()
+                for event in events:
+                    self._recursive_process_event(scene, event)
 
             # update game state
             self._recursive_update(scene, delta_time)
@@ -192,3 +180,39 @@ class Game:
         # reset flags, prepare for next draw
         hk.resized = False
         hk.mooved = False
+
+    def _recursive_process_event(self, game_object, event):
+        """
+        Calls the process_event method on the given game_object
+        as well as on all children (depending on how the GameObject)
+        chooses to propagate the event.
+        """
+
+        # process the event
+        propagation = game_object.process_event(event)
+
+        # do not propagate by default
+        if propagation is None:
+            propagation = EventPropagation.propagate_none()
+
+        # propagate the event to the children
+
+        # no propagation
+        if propagation.should_not_propagate():
+            return
+
+        # recursively propagate to all children
+        elif propagation.should_propagate_all():
+            children = game_object.get_child_objects()
+            for child_object in children:
+                self._recursive_process_event(child_object, event)
+
+        # propagate just to a single child object
+        # (good for ui focus management)
+        elif propagation.should_forward():
+            child_object = propagation.get_forwarded_game_object()
+            if child_object is not None:
+                self._recursive_process_event(child_object, event)
+
+        else:
+            raise RuntimeError("Bad propagation info")

@@ -1,5 +1,5 @@
 import curses
-from cac.client.engine.game_assets import get_asset_text_file
+from cac.client.engine.asset_loader import get_asset_text_file
 from cac.client.engine.curses_colour import get_colour_pair_nr
 
 
