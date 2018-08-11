@@ -25,6 +25,8 @@ def on_service_state_change(zeroconf, service_type, name, state_change):
             print("  Server: %s" % (info.server,))
             if info.properties:
                 print("  Properties are:")
+                print(type(info.properties))
+                print(repr(b"name" in info.properties))
                 for key, value in info.properties.items():
                     print("    %s: %s" % (key, value))
             else:

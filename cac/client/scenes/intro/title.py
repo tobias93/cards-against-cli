@@ -1,8 +1,8 @@
 import curses
 from cac.client.engine.game_object import GameObject
-from cac.client.helpers.sprite import Sprite
-from cac.client.helpers.colour import get_colour_pair_nr
-from cac.client.helpers.animation import Animation
+from cac.client.engine.curses_sprite import Sprite
+from cac.client.engine.curses_colour import get_colour_pair_nr
+from cac.client.engine.animation import Animation
 
 
 class TitleBox(GameObject):

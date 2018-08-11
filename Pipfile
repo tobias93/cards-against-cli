@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 zeroconf = "*"
 netifaces = "*"
-simpleaudio = "*"
 
 [dev-packages]
 

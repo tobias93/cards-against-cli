@@ -2,6 +2,8 @@ import curses
 import time
 from enum import Enum
 
+from cac.client.engine.game_object import Scene
+
 
 class EventType(Enum):
     KEY_DOWN = 1
@@ -18,6 +20,7 @@ class Game:
         self.load_scene(None)
 
     def load_scene(self, main_game_object):
+        assert isinstance(main_game_object, Scene)
         self._current_scene = main_game_object
 
     def run(self, curses_window=None):
@@ -39,14 +42,24 @@ class Game:
         last_frame_time = time.time()
         min_frame_time = 1.0 / self._max_framerate
         render_exception_cnt = 0
+        scene = None
 
         # the game loop
         while self._current_scene is not None:
 
             # work with the current scene
-            scene = self._current_scene
-            if scene is None:
-                continue
+            if scene is not self._current_scene:
+
+                # stop the old scene
+                if scene is not None:
+                    scene.stop_scene()
+
+                # start the new scene
+                scene = self._current_scene
+                if scene is not None:
+                    scene.start_scene(self)
+                else:
+                    continue
 
             # time
             this_frame_time = time.time()
@@ -96,6 +109,11 @@ class Game:
                 render_exception_cnt += 1
                 if render_exception_cnt > 3:
                     raise
+
+        # game loop terminated.
+        # stop the last scene.
+        if scene is not None:
+            scene.stop_scene()
 
     def _recursive_update(self, game_object, delta_time):
         """

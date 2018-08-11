@@ -97,3 +97,34 @@ class GameObject(ABC):
         Should draw the game object onto the given curses pad.
         """
         raise NotImplementedError()
+
+
+class Scene(GameObject):
+    """
+    A scene is a "special" game object.
+    It is the root of the tree of game objects ("Scene graph").
+    There is always exactly one active scene in a game.
+    A scene can be loaded into the game and made active by
+    calling the load_scene() method of the
+    cac.client.engine.game_loop.Game class with a Scene instance.
+    """
+
+    @abstractmethod
+    def start_scene(self, game):
+        """
+        Will be called after the scene was loaded
+        using the load_scene() method of the game.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def stop_scene(self):
+        """
+        This method will be called when the scene
+        becomes inactive. This happens in the following cases:
+            - An other scene is loaded using the load_scene()
+              method of the game
+            - The game is over. The application will exit.
+            - The application exits, because the user pressed Ctrl-C.
+        """
+        raise NotImplementedError()

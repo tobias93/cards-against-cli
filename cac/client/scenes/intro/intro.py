@@ -1,18 +1,24 @@
-from cac.client.engine.game_object import GameObject
-from cac.client.helpers.audio import play_sound
-from cac.client.helpers.colour import get_colour_pair_nr
-from cac.client.helpers.text import render_text
+from cac.client.engine.game_object import Scene
+from cac.client.engine.curses_colour import get_colour_pair_nr
+from cac.client.engine.curses_text import render_text
 from cac.client.scenes.intro.title import TitleBox
+from cac.client.scenes.select_server.select_server import SelectServerScene
 
 
-class IntroScene(GameObject):
+class IntroScene(Scene):
 
     def __init__(self):
         super().__init__()
-        self._audio_started = False
         self._title_shown = False
         self._titlebox = TitleBox()
         self._time = 0
+        self._game = None
+
+    def start_scene(self, game):
+        self._game = game
+
+    def stop_scene(self):
+        pass
 
     def get_child_objects(self):
         return [self._titlebox]
@@ -24,16 +30,15 @@ class IntroScene(GameObject):
 
         self._time += delta_time
 
-        # play the bg audio
-        if not self._audio_started:
-            play_sound("audio/intro.wav")
-            self._audio_started = True
-            self._time = 0
-
         # show title
         if self._time > 1.7 and not self._title_shown:
             self._titlebox.open(20)
             self._title_shown = True
+
+        # transition to the next scene
+        if self._time > 6:
+            next_scene = SelectServerScene()
+            self._game.load_scene(next_scene)
 
         # position the title
         w, h = self.size
