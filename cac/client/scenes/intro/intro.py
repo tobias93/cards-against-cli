@@ -37,8 +37,10 @@ class IntroScene(GameObject):
 
         # position the title
         w, h = self.size
-        self._titlebox.position = 10, 10
-        self._titlebox.size = w - 20, 0
+        border_size_x = int(max(min(w - 92, 20) / 2, 0))
+        border_size_y = int(max(min(h - 18, 20) / 2, 0))
+        self._titlebox.position = border_size_x, border_size_y
+        self._titlebox.size = w - 2 * border_size_x, 0
 
     def render(self, win):
         w, h = self.size

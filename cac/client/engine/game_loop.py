@@ -85,7 +85,7 @@ class Game:
 
             # draw
             try:
-                self._recursive_draw(scene, 0, 0, False)
+                self._recursive_draw(scene, 0, 0, scene_w, scene_h, False)
                 curses.doupdate()
                 render_exception_cnt = 0
             except Exception:
@@ -111,7 +111,9 @@ class Game:
         for child_object in children:
             self._recursive_update(child_object, delta_time)
 
-    def _recursive_draw(self, game_object, base_x, base_y, base_mooved):
+    def _recursive_draw(self, game_object,
+                        base_x, base_y, base_w, base_h,
+                        base_mooved):
 
         # quick access to the game object and the housekeeping object
         go = game_object
@@ -131,17 +133,42 @@ class Game:
 
         # rerender it
         if w != 0 and h != 0 and visible:
+
+            # render it into the dedicated pad
             go.render(hk.render_pad)
-            # todo clip coordinates, so that curses does not
-            # throw an exception when the window is too small
-            hk.render_pad.noutrefresh(0, 0, y, x, y + h - 1, x + w - 1)
+
+            # draw the pad on the screen.
+            # clip coordinates, on the parent go
+            pad_min_x = 0
+            pad_min_y = 0
+            screen_min_x = x
+            screen_min_y = y
+            screen_max_x = x + w - 1
+            screen_max_y = y + h - 1
+            base_max_x = base_x + base_w - 1
+            base_max_y = base_y + base_h - 1
+            if screen_min_x < base_x:
+                pad_min_x += base_x - screen_min_x
+                screen_min_x = base_x
+            if screen_min_y < base_y:
+                pad_min_y += base_y - screen_min_y
+                screen_min_y = base_y
+            if screen_max_x > base_max_x:
+                screen_max_x = base_max_x
+            if screen_max_y > base_max_y:
+                screen_max_y = base_max_y
+            if screen_max_x > screen_min_x and screen_max_y > screen_min_y:
+                hk.render_pad.noutrefresh(
+                    pad_min_y, pad_min_x,
+                    screen_min_y, screen_min_x, screen_max_y, screen_max_x
+                )
 
         # recursively render subwindows
         children = go.get_child_objects()
         for child_object in children:
             self._recursive_draw(
                 child_object,
-                base_x + x, base_y + y,
+                base_x + x, base_y + y, w, h,
                 hk.mooved or base_mooved)
 
         # reset flags, prepare for next draw
