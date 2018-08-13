@@ -22,6 +22,38 @@ class ListBoxItem:
 
 
 class ListBox(GameObject):
+    """
+    List box ui component.
+    Shows a list of items, from which one can be selected via Keyboard.
+
+    How to use:
+
+    >>> list_box = ListBox()
+    ... list_box.items = [
+    ...    ListBoxItem("Item one"),
+    ...    ListBoxItem("Item two")
+    ... ]
+
+    Optionally, you can also customize colours using the following attributes:
+     - fg_colour
+     - bg_colour
+     - info_fg_colour
+     - info_bg_colour
+     - selected_fg_colour
+     - selected_bg_colour
+     - selected_info_fg_colour
+     - selected_info_bg_colour
+     - border_fg_colour
+     - border_bg_colour
+
+    Items can be selected by pressing j or k. Make sure to forward the
+    corresponding keyboard events.
+    It is your task to listen for the enter key or something to
+    confirm the selection.
+
+    The currently selected item can always be accessed using:
+     > list_box.selected_item
+    """
 
     def __init__(self):
         super().__init__()
@@ -64,6 +96,12 @@ class ListBox(GameObject):
 
         if self._selected_item_index < 0:
             self._selected_item_index = 0
+
+    @property
+    def selected_item(self):
+        if self._selected_item_index < len(self.items) \
+                and self._selected_item_index >= 0:
+            return self.items[self._selected_item_index]
 
     def render(self, win):
         w, h = self.size
