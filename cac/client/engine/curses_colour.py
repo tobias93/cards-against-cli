@@ -12,10 +12,43 @@ next_pair_nr = 1
 next_pair_it = 0
 
 
+def get_colour_pair(*args):
+    """
+    Returns a matching colour pair, that can be
+    used within curses directly for text formatting.
+    This function basically calls get_colour_pair_nr() for you and
+    then passes the result into curses.color_pair() to get the
+    actual text formatter.
+    The function can be called either with 6 floats representing
+    r/g/b values of the foreground and background colour
+    or with two tuples, each containing 3 floats:
+
+    get_colour_pair(fg, bg)
+    get_colour_pair(fg_r, fg_g, fg_b, bg_r, bg_g, bg_b)
+
+    The values r,g,b should be floating point numbers between 0 and 1.
+    """
+
+    # parse arguments - take either 2 tuples or 6 floats
+    if len(args) == 6:
+        fg = (args[0], args[1], args[2], )
+        bg = (args[3], args[4], args[5], )
+    elif len(args) == 2:
+        fg = args[0]
+        bg = args[1]
+    else:
+        raise TypeError(f"Wrong number of arguments.")
+
+    # get colour
+    colour_pair_nr = get_colour_pair_nr(*(fg + bg))
+    return curses.color_pair(colour_pair_nr)
+
+
 def get_colour_pair_nr(fg_r, fg_g, fg_b, bg_r, bg_g, bg_b):
     """
-    Returns a matching colour pair number, that can be used within curses
-    that closely resembles the given foreground and background r/g/b colours.
+    Returns a matching colour pair number, that can be
+    used with curses.color_pair() that closely resembles the given
+    foreground and background r/g/b colours.
     The values r,g,b should be floating point numbers between 0 and 1.
     """
 

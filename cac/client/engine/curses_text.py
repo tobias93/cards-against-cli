@@ -24,8 +24,8 @@ def render_text(
     fill_bg=False,
     alignment=TextAlignment.LEFT,
     valignment=VerticalTextAlignment.TOP,
-    text_colour_pair=0,
-    bg_colour_pair=None
+    text_format=0,
+    bg_format=None
 ):
     """
     Layouts and renders the given text.
@@ -63,13 +63,17 @@ def render_text(
                 Vertical alignment of the text.
                 Works like the alignment parameter, but for the vertical
                 direction instead of the horizontal direction.
-    :param text_colour_pair:
-                The colour pair, that should be used to render the text.
-                This can for example be obtained using the get_colour_pair_nr()
+    :param text_format:
+                The colour pair and formatting flags, that should be used
+                to render the text.
+                This can for example be obtained using the get_colour_pair()
                 method in the colour module.
-    :param bg_colour_pair:
-                The colour pair, that should be used to render te
-                background. By default, the background is rendered using
+    :param bg_format:
+                The colour pair and formatting flags, that should be used
+                to render the background.
+                This can for example be obtained using the get_colour_pair()
+                method in the colour module.
+                By default, the background is rendered using
                 the same colour pair as the text.
     """
 
@@ -78,10 +82,8 @@ def render_text(
         return
 
     # figure out the colours
-    if bg_colour_pair is None:
-        bg_colour_pair = text_colour_pair
-    text_format = curses.color_pair(text_colour_pair)
-    bg_format = curses.color_pair(bg_colour_pair)
+    if bg_format is None:
+        bg_format = text_format
 
     # make sure, no line is longer than w
     current_line = 0

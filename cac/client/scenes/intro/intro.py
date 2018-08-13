@@ -1,5 +1,5 @@
 from cac.client.engine.game_object import Scene
-from cac.client.engine.curses_colour import get_colour_pair_nr
+from cac.client.engine.curses_colour import get_colour_pair
 from cac.client.engine.curses_text import render_text
 from cac.client.scenes.intro.title import TitleBox
 from cac.client.scenes.select_server.select_server import SelectServerScene
@@ -51,5 +51,5 @@ class IntroScene(Scene):
         w, h = self.size
         render_text(
             win, "", 0, 0, w, h, fill_bg=" ",
-            bg_colour_pair=get_colour_pair_nr(1, 1, 1, 0, 0, 0.2)
+            bg_format=get_colour_pair(1, 1, 1, 0, 0, 0.2)
         )

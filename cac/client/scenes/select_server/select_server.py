@@ -68,7 +68,7 @@ class SelectServerScene(Scene):
 
             # items
             self._server_list_box.items = [
-                ListBoxItem(f"{srv.name} ({srv.address}:{srv.port})", srv)
+                ListBoxItem(srv.name, [f"{srv.address}:{srv.port}"], srv)
                 for srv in self._discovered_servers
             ]
 

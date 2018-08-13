@@ -1,7 +1,7 @@
 import curses
 from cac.client.engine.game_object import GameObject
 from cac.client.engine.curses_sprite import Sprite
-from cac.client.engine.curses_colour import get_colour_pair_nr
+from cac.client.engine.curses_colour import get_colour_pair
 from cac.client.engine.animation import Animation
 
 
@@ -34,7 +34,7 @@ class TitleBox(GameObject):
 
         # make a  white bg
         win.erase()
-        win.bkgd(curses.color_pair(get_colour_pair_nr(0, 0, 0, 1, 1, 1)))
+        win.bkgd(get_colour_pair(0, 0, 0, 1, 1, 1))
 
         # show the title sprite, centered
         w, h = self.size
