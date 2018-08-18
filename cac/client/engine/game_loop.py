@@ -147,10 +147,10 @@ class Game:
             # clip coordinates, on the parent go
             pad_min_x = 0
             pad_min_y = 0
-            screen_min_x = x
-            screen_min_y = y
-            screen_max_x = x + w - 1
-            screen_max_y = y + h - 1
+            screen_min_x = base_x + x
+            screen_min_y = base_y + y
+            screen_max_x = base_x + x + w - 1
+            screen_max_y = base_y + y + h - 1
             base_max_x = base_x + base_w - 1
             base_max_y = base_y + base_h - 1
             if screen_min_x < base_x:

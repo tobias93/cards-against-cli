@@ -3,6 +3,7 @@ from cac.client.engine.curses_colour import get_colour_pair
 from cac.client.engine.curses_text import render_text
 from cac.client.scenes.intro.title import TitleBox
 from cac.client.scenes.select_server.select_server import SelectServerScene
+from cac.client.engine.events_keyboard import KeyboardEvent
 
 
 class IntroScene(Scene):
@@ -24,7 +25,8 @@ class IntroScene(Scene):
         return [self._titlebox]
 
     def process_event(self, event):
-        pass
+        if isinstance(event, KeyboardEvent) and event.key_code == ord("\n"):
+            self.next_scene()
 
     def update(self, delta_time):
 
@@ -37,8 +39,7 @@ class IntroScene(Scene):
 
         # transition to the next scene
         if self._time > 6:
-            next_scene = SelectServerScene()
-            self._game.load_scene(next_scene)
+            self.next_scene()
 
         # position the title
         w, h = self.size
@@ -46,6 +47,10 @@ class IntroScene(Scene):
         border_size_y = int(max(min(h - 18, 20) / 2, 0))
         self._titlebox.position = border_size_x, border_size_y
         self._titlebox.size = w - 2 * border_size_x, 0
+
+    def next_scene(self):
+        next_scene = SelectServerScene()
+        self._game.load_scene(next_scene)
 
     def render(self, win):
         w, h = self.size

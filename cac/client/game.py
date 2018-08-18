@@ -4,6 +4,9 @@ from cac.client.engine.game_loop import Game
 from cac.client.engine.events_keyboard import KeyboardEventSource
 from cac.client.engine.asset_loader import load_assets_from_folder
 from cac.client.scenes.intro.intro import IntroScene
+from cac.client.scenes.select_server.select_server import \
+    ReplaceWithServerException
+from cac.server.server import main as server_main
 
 
 def main(curses_window):
@@ -26,4 +29,7 @@ def main(curses_window):
 
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    try:
+        curses.wrapper(main)
+    except ReplaceWithServerException:
+        server_main()

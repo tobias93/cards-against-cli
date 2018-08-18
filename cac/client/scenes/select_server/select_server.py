@@ -1,23 +1,22 @@
-import threading
-import socket
+import curses
 
-from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
-
-from cac.client.scenes.select_server.list_box import ListBox, ListBoxItem
+from cac.client.scenes.select_server.manual_connect_page import \
+    ManualConnectForm
+from cac.client.scenes.select_server.auto_discovery_page import \
+    SelectAutoDiscoveryServer
 from cac.client.engine.game_object import Scene
 from cac.client.engine.events import EventPropagation
-from cac.client.engine.curses_text import render_text, \
-    TextAlignment, VerticalTextAlignment
+from cac.client.engine.curses_colour import get_colour_pair
+from cac.client.engine.events_keyboard import KeyboardEvent
+from cac.client.engine.curses_text import render_text
 
 
-class Server():
-
-    def __init__(self, name="",
-                 zeroconf_server_name="", address="", port=1337):
-        self.address = address
-        self.name = name
-        self.zeroconf_server_name = zeroconf_server_name
-        self.port = port
+class ReplaceWithServerException(Exception):
+    """
+    Exception that is raised to exit the game and tell
+    the main method to instead run the cac server.
+    """
+    pass
 
 
 class SelectServerScene(Scene):
@@ -28,102 +27,69 @@ class SelectServerScene(Scene):
         # game
         self._game = None
 
-        # server auto discovery
-        self._discovered_servers = []
-        self._discovered_servers_lock = threading.Lock()
-        self._zeroconf = None
-        self._browser = None
+        # manual connection dialog
+        self._page_manual_connection = ManualConnectForm()
+
+        # autodiscovery dialog
+        self._page_autodiscover = SelectAutoDiscoveryServer()
         self._discovery_enabled = False
 
-        # discovered server selection
-        self._server_list_box = ListBox()
-        self._server_list_box_visible = False
+        # which page is shown
+        self._shown_page = self._page_autodiscover
 
     def start_scene(self, game):
         self._game = game
         try:
-            self.start_discovery()
+            self._page_autodiscover.start_discovery()
             self._discovery_enabled = True
         except Exception:
             pass
 
     def stop_scene(self):
         if self._discovery_enabled:
-            self.stop_discovery()
+            self._page_autodiscover.stop_discovery()
             self._discovery_enabled = False
 
     def get_child_objects(self):
-        if self._server_list_box_visible:
-            return [self._server_list_box]
-        else:
-            return []
+        return [self._shown_page]
 
     def process_event(self, event):
-        return EventPropagation.propagate_forward(self._server_list_box)
+
+        # keyboard shortcuts
+        if isinstance(event, KeyboardEvent):
+            if event.key_code == curses.KEY_F2:
+                self.start_server()
+            elif event.key_code == curses.KEY_F3:
+                if self._shown_page == self._page_autodiscover:
+                    self._shown_page = self._page_manual_connection
+                else:
+                    self._shown_page = self._page_autodiscover
+
+        return EventPropagation.propagate_forward(self._shown_page)
 
     def update(self, delta_time):
 
-        # update the listbox contents
-        with self._discovered_servers_lock:
-
-            # items
-            self._server_list_box.items = [
-                ListBoxItem(srv.name, [f"{srv.address}:{srv.port}"], srv)
-                for srv in self._discovered_servers
-            ]
-
-            # only make the listbox visible,
-            # if there is actually something to show...
-            self._server_list_box_visible = len(self._discovered_servers) > 0
-
-        # reposition the list box
+        # reposition the children
         w, h = self.size
-        self._server_list_box.position = 0, 0
-        self._server_list_box.size = w, h - 1
+        self._shown_page.position = 0, 0
+        self._shown_page.size = w, h - 3
 
     def render(self, win):
         w, h = self.size
         win.erase()
 
-        if not self._server_list_box_visible:
-            render_text(
-                win, "Searching for servers...", 0, 0, w, h,
-                alignment=TextAlignment.CENTER,
-                valignment=VerticalTextAlignment.CENTER
-            )
+        # render the "Help section"
+        if self._shown_page == self._page_autodiscover:
+            f3_text = "Connect manually   "
+        else:
+            f3_text = "Autodiscover server"
 
-    def start_discovery(self):
-        self._zeroconf = Zeroconf()
-        self._browser = ServiceBrowser(
-            self._zeroconf,
-            "_cac._tcp.local.",
-            handlers=[self.on_service_state_change]
+        white_text = get_colour_pair(1, 1, 1, 0, 0, 0)
+        render_text(
+            win, f"  <F3>: {f3_text}           <F2>: Run server",
+            0, h - 2, w, 1,
+            text_format=white_text,
         )
 
-    def stop_discovery(self):
-        self.zeroconf.close()
-
-    def on_service_state_change(self, zeroconf,
-                                service_type, name,
-                                state_change):
-        with self._discovered_servers_lock:
-
-            # remove it
-            self._discovered_servers = [
-                server
-                for server in self._discovered_servers
-                if server.zeroconf_server_name != name
-            ]
-
-            # add service
-            if state_change is ServiceStateChange.Added:
-                info = zeroconf.get_service_info(service_type, name)
-                if info:
-                    addr = socket.inet_ntoa(info.address)
-                    port = info.port
-                    zc_name = name
-                    name = "Unnamed Server"
-                    if info.properties and b"name" in info.properties:
-                        name = info.properties[b"name"].decode("utf-8")
-                    self._discovered_servers.append(
-                        Server(name, zc_name, addr, port))
+    def start_server(self):
+        raise ReplaceWithServerException()

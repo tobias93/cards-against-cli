@@ -48,8 +48,8 @@ class ListBox(GameObject):
      - border_fg_colour
      - border_bg_colour
 
-    Items can be selected by pressing j or k. Make sure to forward the
-    corresponding keyboard events.
+    Items can be selected by pressing j or k. Or the arrow keys.
+    Make sure to forward the corresponding keyboard events.
     It is your task to listen for the enter key or something to
     confirm the selection.
 

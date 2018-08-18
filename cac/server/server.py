@@ -22,12 +22,19 @@ def main():
     Brings up the complete cac server.
     """
 
+    # logging
+    logging.basicConfig(
+        format='%(levelname)s - %(name)s - %(message)s',
+        level=logging.DEBUG
+    )
+
     # start announcing zeroconf service
     server_name = "My Cards against Cli Server"
     if "CAC_ANNOUNCE_SERVER_NAME" in os.environ:
         server_name = os.environ["CAC_ANNOUNCE_SERVER_NAME"]
     announcers = start_announcing(server_name, 9852)
 
+    # run the actual server
     try:
         while True:
             sleep(0.1)
@@ -38,10 +45,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # logging
-    logging.basicConfig(
-        format='%(levelname)s - %(name)s - %(message)s',
-        level=logging.DEBUG
-    )
-
     main()
