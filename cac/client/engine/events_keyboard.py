@@ -18,6 +18,7 @@ class KeyboardEventSource(EventSource):
     def __init__(self):
         self._win = curses.newwin(1, 1)
         self._win.nodelay(1)
+        self._win.keypad(1)
 
     def get_events(self):
         key = self._win.getch()

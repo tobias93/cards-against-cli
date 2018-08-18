@@ -1,4 +1,3 @@
-import curses
 from cac.client.engine.game_object import GameObject
 from cac.client.engine.curses_sprite import Sprite
 from cac.client.engine.curses_colour import get_colour_pair

@@ -1,3 +1,5 @@
+import curses
+
 from cac.client.engine.game_object import GameObject
 from cac.client.engine.curses_text import render_text
 from cac.client.engine.curses_colour import get_colour_pair
@@ -80,11 +82,19 @@ class ListBox(GameObject):
         return []
 
     def process_event(self, event):
+        up_keys = [
+            ord('k'),
+            curses.KEY_UP,
+        ]
+        down_keys = [
+            ord('j'),
+            curses.KEY_DOWN,
+        ]
         if isinstance(event, KeyboardEvent):
-            if event.is_ascii_key('j'):
-                self._selected_item_index += 1
-            elif event.is_ascii_key('k'):
+            if event.key_code in up_keys:
                 self._selected_item_index -= 1
+            elif event.key_code in down_keys:
+                self._selected_item_index += 1
 
     def update(self, delta_time):
 
