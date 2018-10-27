@@ -13,7 +13,7 @@ class Game:
         self._event_sources = []
 
     def exit(self):
-        self.load_scene(None)
+        self._current_scene = None
 
     def load_scene(self, main_game_object):
         assert isinstance(main_game_object, Scene)

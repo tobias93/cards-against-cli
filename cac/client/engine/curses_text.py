@@ -77,7 +77,7 @@ def render_text(
                 the same colour pair as the text.
     """
 
-    # who on earth would try to show text with a with of 0...
+    # who on earth would try to show text with a width of 0...
     if w <= 0 or h <= 0:
         return
 

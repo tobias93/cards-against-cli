@@ -15,4 +15,4 @@ c0,0,0,0,1,1,1
 :                                ██▄▄▄▄█  ██▄▄▄▄▄▄   ▄▄██▄▄
 :                                  ▀▀▀▀   ▀▀▀▀▀▀▀▀   ▀▀▀▀▀▀
 :
-:                                (A game for horrible nerds)
+:                                (A game for horrible people)

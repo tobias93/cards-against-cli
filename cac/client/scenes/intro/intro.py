@@ -1,9 +1,9 @@
 from cac.client.engine.game_object import Scene
-from cac.client.engine.curses_colour import get_colour_pair
-from cac.client.engine.curses_text import render_text
+from cac.client.engine.game_loop import Game
 from cac.client.scenes.intro.title import TitleBox
 from cac.client.scenes.select_server.select_server import SelectServerScene
 from cac.client.engine.events_keyboard import KeyboardEvent
+from cac.client.game_objects.background import HypnoBackground
 
 
 class IntroScene(Scene):
@@ -13,7 +13,9 @@ class IntroScene(Scene):
         self._title_shown = False
         self._titlebox = TitleBox()
         self._time = 0
-        self._game = None
+        self._game: Game = None
+        self._bg = HypnoBackground(transition_from=HypnoBackground())
+        self._bg.transition_speed = 1.0 / 6
 
     def start_scene(self, game):
         self._game = game
@@ -22,7 +24,7 @@ class IntroScene(Scene):
         pass
 
     def get_child_objects(self):
-        return [self._titlebox]
+        return [self._bg, self._titlebox]
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent) and event.key_code == ord("\n"):
@@ -48,13 +50,12 @@ class IntroScene(Scene):
         self._titlebox.position = border_size_x, border_size_y
         self._titlebox.size = w - 2 * border_size_x, 0
 
+        self._bg.position = 0, 0
+        self._bg.size = self.size
+
     def next_scene(self):
         next_scene = SelectServerScene()
         self._game.load_scene(next_scene)
 
     def render(self, win):
-        w, h = self.size
-        render_text(
-            win, "", 0, 0, w, h, fill_bg=" ",
-            bg_format=get_colour_pair(1, 1, 1, 0, 0, 0.2)
-        )
+        pass
