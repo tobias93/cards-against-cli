@@ -69,14 +69,16 @@ class SelectAutoDiscoveryServer(GameObject):
         w, h = self.size
         win.erase()
 
-        white_text = get_colour_pair(1, 1, 1, 0, 0, 0)
+        colour = get_colour_pair(0, 0, 0, 1, 1, 1)
+        win.bkgd(colour)
+
 
         if not self._server_list_box_visible:
             render_text(
                 win, "Searching for servers...", 0, 0, w, h,
                 alignment=TextAlignment.CENTER,
                 valignment=VerticalTextAlignment.CENTER,
-                text_format=white_text,
+                text_format=colour,
             )
 
     def start_discovery(self):

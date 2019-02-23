@@ -67,16 +67,16 @@ class ListBox(GameObject):
         self._selected_item_index = 0
 
         # colours
-        self.fg_colour = (1, 1, 1)
-        self.bg_colour = (0, 0, 0)
+        self.fg_colour = (0, 0, 0)
+        self.bg_colour = (1, 1, 1)
         self.info_fg_colour = (.5, .5, .5)
-        self.info_bg_colour = (0, 0, 0)
+        self.info_bg_colour = (1, 1, 1)
         self.selected_fg_colour = (0, 0, 0)
-        self.selected_bg_colour = (1, 1, 1)
-        self.selected_info_fg_colour = (.0, .0, .0)
-        self.selected_info_bg_colour = (1, 1, 1)
-        self.border_fg_colour = (1, 1, 1)
-        self.border_bg_colour = (0, 0, 0)
+        self.selected_bg_colour = (.7, .7, .7)
+        self.selected_info_fg_colour = (0, 0, 0)
+        self.selected_info_bg_colour = (.7, .7, .7)
+        self.border_fg_colour = (0, 0, 0)
+        self.border_bg_colour = (1, 1, 1)
 
     def get_child_objects(self):
         return []
@@ -117,12 +117,6 @@ class ListBox(GameObject):
         w, h = self.size
         win.erase()
 
-        # border
-        border_col_pair = get_colour_pair(
-            self.border_fg_colour, self.border_bg_colour)
-        win.bkgd(border_col_pair)
-        win.border()
-
         # colours
         col_text = get_colour_pair(
             self.fg_colour,
@@ -136,6 +130,9 @@ class ListBox(GameObject):
         col_info_sel = get_colour_pair(
             self.selected_info_fg_colour,
             self.selected_info_bg_colour)
+
+        # background
+        win.bkgd(col_text)
 
         # create a list of lines for the complete list box
         # and their respective colours
@@ -152,23 +149,19 @@ class ListBox(GameObject):
             lines.append((this_ite_col_text, item.caption))
             lines.extend([(this_ite_col_info, info) for info in item.info])
 
-        # available space without border
-        items_w = w - 2
-        items_h = h - 2
-
         # choose, where to start rendering ("scrolling")
         # (if the list of lines is longer than the availible height)
         nr_lines = len(lines)
-        first_line = selected_line - int(items_h / 2)
-        if first_line + items_h - 1 >= nr_lines:
-            first_line = nr_lines - items_h
+        first_line = selected_line - int(h / 2)
+        if first_line + h - 1 >= nr_lines:
+            first_line = nr_lines - h
         if first_line < 0:
             first_line = 0
 
         # draw the lines
-        visible_lines = lines[first_line:first_line + items_h]
+        visible_lines = lines[first_line:first_line + h]
         for index, (colour, line) in enumerate(visible_lines):
 
             # draw the text in the chosen colour
-            render_text(win, line, 1, index + 1, items_w, 1,
+            render_text(win, line, 0, index, w, 1,
                         text_format=colour, fill_bg=True)

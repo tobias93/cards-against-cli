@@ -42,10 +42,10 @@ class ManualConnectForm(GameObject):
         w, h = self.size
 
         # position text boxes
-        self._text_box_address.position = 1, 3
-        self._text_box_address.size = w - 2, 3
-        self._text_box_port.position = 1, 8
-        self._text_box_port.size = w - 2, 3
+        self._text_box_address.position = 1, 4
+        self._text_box_address.size = w - 2, 2
+        self._text_box_port.position = 1, 11
+        self._text_box_port.size = w - 2, 2
 
         # highlight the focussed child
         for index, text_box_child in enumerate(self.get_child_objects()):
@@ -55,14 +55,13 @@ class ManualConnectForm(GameObject):
         w, h = self.size
         win.erase()
 
-        # border
-        border_col_pair = get_colour_pair(1, 1, 1, 0, 0, 0)
+        # background
+        border_col_pair = get_colour_pair(0, 0, 0, 1, 1, 1)
         win.bkgd(border_col_pair)
-        win.border()
 
         # draw the labels for the text boxes
-        label_color = get_colour_pair(1, 1, 1, 0, 0, 0)
+        label_color = get_colour_pair(0, 0, 0, 1, 1, 1)
         render_text(
             win, "Server Address:", 1, 2, w - 2, 1, text_format=label_color)
         render_text(
-            win, "Port:", 1, 7, w - 2, 1, text_format=label_color)
+            win, "Port:", 1, 9, w - 2, 1, text_format=label_color)

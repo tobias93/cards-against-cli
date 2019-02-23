@@ -54,7 +54,7 @@ class IntroScene(Scene):
         self._bg.size = self.size
 
     def next_scene(self):
-        next_scene = SelectServerScene()
+        next_scene = SelectServerScene(self._bg)
         self._game.load_scene(next_scene)
 
     def render(self, win):

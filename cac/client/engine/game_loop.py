@@ -163,7 +163,7 @@ class Game:
                 screen_max_x = base_max_x
             if screen_max_y > base_max_y:
                 screen_max_y = base_max_y
-            if screen_max_x > screen_min_x and screen_max_y > screen_min_y:
+            if screen_max_x >= screen_min_x and screen_max_y >= screen_min_y:
                 hk.render_pad.noutrefresh(
                     pad_min_y, pad_min_x,
                     screen_min_y, screen_min_x, screen_max_y, screen_max_x

@@ -23,10 +23,12 @@ class TextBox(GameObject):
         self.use_cursor = False
 
         # colours
-        self.fg_colour = (1, 1, 1)
-        self.bg_colour = (0, 0, 1)
-        self.border_fg_colour = (1, 1, 1)
-        self.border_bg_colour = (0, 1, 0)
+        self.fg_colour = (0, 0, 0)
+        self.bg_colour = (1, 1, 1)
+        self.border_fg_colour = (0, 0, 0)
+        self.border_bg_colour = (1, 1, 1)
+        self.cursor_fg_colour = (1, 1, 1)
+        self.cursor_bg_colour = (0, 0, 0)
 
     def get_child_objects(self):
         return []
@@ -77,26 +79,26 @@ class TextBox(GameObject):
         border_col_pair = get_colour_pair(
             self.border_fg_colour, self.border_bg_colour)
         win.bkgd(border_col_pair)
-        win.border()
+        win.hline(h-1, 0,curses.ACS_HLINE, w)
 
         # colours
         col_text = get_colour_pair(
             self.fg_colour,
             self.bg_colour)
-        col_cursor = get_colour_pair(0, 0, 0, 1, 0, 0)
+        col_cursor = get_colour_pair(self.cursor_fg_colour, self.cursor_bg_colour)
 
         # calculate the positions
-        text_w = w - 2
+        text_w = w
         if self.cursor_pos < text_w:
             start_char = 0
-            cursor_position = self.cursor_pos + 1
+            cursor_position = self.cursor_pos
         else:
             start_char = self.cursor_pos - text_w + 1
-            cursor_position = text_w
+            cursor_position = text_w - 1
 
         # draw the text
         render_text(
-            win, self.text[start_char:], 1, 1, text_w, 1,
+            win, self.text[start_char:], 0, 0, text_w, 1,
             text_format=col_text
         )
 
@@ -104,6 +106,6 @@ class TextBox(GameObject):
         char_under_cursor = (self.text + ' ')[self.cursor_pos]
         if self.use_cursor:
             render_text(
-                win, char_under_cursor, cursor_position, 1, 1, 1,
+                win, char_under_cursor, cursor_position, 0, 1, 1,
                 text_format=col_cursor
             )
